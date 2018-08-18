@@ -1,0 +1,17 @@
+{
+    "name": "mohamed/atm",
+    "authors": [
+        {
+            "name": "Mohamed Zahran",
+            "email": "m.zahran90@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1.3"
+    },
+    "autoload": {
+        "classmap": [
+            "app/"
+        ]
+    }
+}
