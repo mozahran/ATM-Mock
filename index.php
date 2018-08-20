@@ -6,6 +6,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use ATM\DefaultTransaction;
 use ATM\DefaultCurrencyBillCounter;
+use ATM\DefaultTransactionHandler;
 use ATM\Factories\CurrencyBillFactory;
 use ATM\Dividers\DefaultTransactionDivider;
 
@@ -19,12 +20,23 @@ $transactionDivider->setTransaction(new DefaultTransaction(2950));
 // that whether we are able to process their transaction or not!
 
 $supportedCurrencyBills = [
-    $currencyBillFactory->create50Bill(),
-    $currencyBillFactory->create200Bill(),
-    $currencyBillFactory->create100Bill(),
+    $fiftyBill = $currencyBillFactory->create50Bill(),
+    $oneHundredBill = $currencyBillFactory->create100Bill(),
+    $twoHundredsBill = $currencyBillFactory->create200Bill(),
 ];
 
 $subTransactions = $transactionDivider->divide($supportedCurrencyBills);
 
-echo '<pre>';
-var_dump($subTransactions);
+$fiftyBillHandler = new DefaultTransactionHandler($fiftyBill);
+$oneHundredBillHandler = new DefaultTransactionHandler($oneHundredBill);
+$twoHundredsBillHandler = new DefaultTransactionHandler($twoHundredsBill);
+
+$fiftyBillHandler->setNext($oneHundredBillHandler);
+$oneHundredBillHandler->setNext($twoHundredsBillHandler);
+$twoHundredsBillHandler->setNext($fiftyBillHandler);
+
+/** @var \ATM\Contracts\Transaction $subTransaction */
+foreach ($subTransactions as $subTransaction) {
+    echo "<pre>Processing Sub-Transaction: {$subTransaction->getAmount()}</pre>";
+    $fiftyBillHandler->handle($subTransaction);
+}
