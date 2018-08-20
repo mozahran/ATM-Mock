@@ -15,7 +15,7 @@ class DefaultTransactionDivider implements TransactionDivider
 
     public function __construct(CurrencyBillCounter $currencyBillCounter)
     {
-        $this->currencyBillCounter = $currencyBillCounter;
+        $this->setCurrencyBillCounter($currencyBillCounter);
     }
 
     public function setTransaction(Transaction $transaction): TransactionDivider
@@ -40,8 +40,17 @@ class DefaultTransactionDivider implements TransactionDivider
             throw new \RuntimeException('You have to pass supported currency bills to divide the transaction against them!');
         }
 
+        // Sort the given currency bills to avoid
+        // pulling from smaller currency bills first.
+        usort($currencyBills, function($billA, $billB) {
+            if ($billA->getValue() == $billB->getValue()) {
+                return false;
+            }
+            return $billA->getValue() > $billB->getValue() ? false : true;
+        });
+
         $subTransactions = [];
-        $transactionAmount = $this->transaction->getAmount();
+        $transactionAmount = $this->getTransaction()->getAmount();
 
         /** @var CurrencyBill $currencyBill */
         foreach ($currencyBills as $currencyBill)
@@ -57,7 +66,8 @@ class DefaultTransactionDivider implements TransactionDivider
 
             $subTransactions[] = new DefaultTransaction(
                 $billAmount,
-                $this->currencyBillCounter->count($currencyBill, $billAmount)
+                $this->getCurrencyBillCounter()->count($currencyBill, $billAmount),
+                $currencyBill
             );
 
         }
