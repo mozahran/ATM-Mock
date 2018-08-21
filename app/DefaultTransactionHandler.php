@@ -35,7 +35,7 @@ class DefaultTransactionHandler implements Handler
         if ($transaction->getCurrencyBill()->getValue() == $this->getCurrencyBill()->getValue()) {
             $billValue = $transaction->getCurrencyBill()->getValue();
             for ($i = 0; $i < $transaction->getBillsCount(); $i++) {
-                echo "<pre>Processing: {$billValue} L.E.</pre>";
+                echo "Processing: {$billValue} L.E.\n";
             }
             return;
         }

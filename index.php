@@ -7,17 +7,14 @@ require_once __DIR__ . '/vendor/autoload.php';
 use ATM\DefaultTransaction;
 use ATM\DefaultCurrencyBillCounter;
 use ATM\DefaultTransactionHandler;
+use ATM\DefaultValidator;
 use ATM\Factories\CurrencyBillFactory;
 use ATM\Dividers\DefaultTransactionDivider;
 
 $currencyBillCounter = new DefaultCurrencyBillCounter();
 $currencyBillFactory = new CurrencyBillFactory();
 $transactionDivider = new DefaultTransactionDivider($currencyBillCounter);
-
-$transactionDivider->setTransaction(new DefaultTransaction(2950));
-
-// We should add a validation layer here to tell the customer
-// that whether we are able to process their transaction or not!
+$validator = new DefaultValidator();
 
 $supportedCurrencyBills = [
     $fiftyBill = $currencyBillFactory->create50Bill(),
@@ -25,6 +22,13 @@ $supportedCurrencyBills = [
     $twoHundredsBill = $currencyBillFactory->create200Bill(),
 ];
 
+$userInput = 2950;
+
+if ( ! $validator->validateInut($userInput, $fiftyBill)) {
+    exit("Cannot process your transaction!\n");
+}
+
+$transactionDivider->setTransaction(new DefaultTransaction($userInput));
 $subTransactions = $transactionDivider->divide($supportedCurrencyBills);
 
 $fiftyBillHandler = new DefaultTransactionHandler($fiftyBill);
@@ -37,6 +41,6 @@ $twoHundredsBillHandler->setNext($fiftyBillHandler);
 
 /** @var \ATM\Contracts\Transaction $subTransaction */
 foreach ($subTransactions as $subTransaction) {
-    echo "<pre>Processing Sub-Transaction: {$subTransaction->getAmount()}</pre>";
+    echo "Processing Sub-Transaction: {$subTransaction->getAmount()}\n";
     $fiftyBillHandler->handle($subTransaction);
 }
