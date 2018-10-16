@@ -32,20 +32,21 @@ class DefaultTransactionDivider implements TransactionDivider
 
     public function divide(array $currencyBills): array
     {
-        if ( ! $this->getTransaction() instanceof Transaction) {
+        if (!$this->getTransaction() instanceof Transaction) {
             throw new \RuntimeException('You have to set a transaction first before using the divide mehod.');
         }
 
-        if ( ! count($currencyBills)) {
+        if (!count($currencyBills)) {
             throw new \RuntimeException('You have to pass supported currency bills to divide the transaction against them!');
         }
 
         // Sort the given currency bills to avoid
         // pulling from smaller currency bills first.
-        usort($currencyBills, function($billA, $billB) {
+        usort($currencyBills, function ($billA, $billB) {
             if ($billA->getValue() == $billB->getValue()) {
                 return false;
             }
+
             return $billA->getValue() > $billB->getValue() ? false : true;
         });
 
@@ -53,8 +54,7 @@ class DefaultTransactionDivider implements TransactionDivider
         $transactionAmount = $this->getTransaction()->getAmount();
 
         /** @var CurrencyBill $currencyBill */
-        foreach ($currencyBills as $currencyBill)
-        {
+        foreach ($currencyBills as $currencyBill) {
             $modulus = $currencyBill->calculateModulus($transactionAmount);
             $billAmount = $transactionAmount - $modulus;
             $transactionAmount -= $billAmount;
@@ -69,7 +69,6 @@ class DefaultTransactionDivider implements TransactionDivider
                 $this->getCurrencyBillCounter()->count($currencyBill, $billAmount),
                 $currencyBill
             );
-
         }
 
         return $subTransactions;

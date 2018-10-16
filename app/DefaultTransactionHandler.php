@@ -37,6 +37,7 @@ class DefaultTransactionHandler implements Handler
             for ($i = 0; $i < $transaction->getBillsCount(); $i++) {
                 echo "<pre>Processing: {$billValue} L.E.</pre>";
             }
+
             return;
         }
 

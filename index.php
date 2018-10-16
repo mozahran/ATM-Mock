@@ -2,13 +2,13 @@
 
 ini_set('display_errors', '1');
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
-use ATM\DefaultTransaction;
 use ATM\DefaultCurrencyBillCounter;
+use ATM\DefaultTransaction;
 use ATM\DefaultTransactionHandler;
-use ATM\Factories\CurrencyBillFactory;
 use ATM\Dividers\DefaultTransactionDivider;
+use ATM\Factories\CurrencyBillFactory;
 
 $currencyBillCounter = new DefaultCurrencyBillCounter();
 $currencyBillFactory = new CurrencyBillFactory();
