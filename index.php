@@ -19,10 +19,14 @@ $transactionDivider->setTransaction(new DefaultTransaction(2950));
 // We should add a validation layer here to tell the customer
 // that whether we are able to process their transaction or not!
 
+$fiftyBill = $currencyBillFactory->create50Bill();
+$oneHundredBill = $currencyBillFactory->create100Bill();
+$twoHundredsBill = $currencyBillFactory->create200Bill();
+
 $supportedCurrencyBills = [
-    $fiftyBill = $currencyBillFactory->create50Bill(),
-    $oneHundredBill = $currencyBillFactory->create100Bill(),
-    $twoHundredsBill = $currencyBillFactory->create200Bill(),
+    $fiftyBill,
+    $oneHundredBill,
+    $twoHundredsBill,
 ];
 
 $subTransactions = $transactionDivider->divide($supportedCurrencyBills);
